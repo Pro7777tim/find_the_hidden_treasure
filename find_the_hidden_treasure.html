@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Гра знайди захований скарб</title>
+    <style>
+    #heading {
+   color: SaddleBrown;
+}
+   #statusHeading {
+   color: 	MediumBlue;
+}
+   #clickHeading {
+   color: Brown;
+}
+   #status {
+   color: Olive;
+}
+   #click {
+   color: Green;
+}
+    </style>
+  </head>
+  <body>
+<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+<h1 id ="heading">Знайди захований скарб!</h1>
+<h1 id ="statusHeading">Статус гри:</h1>
+<h1 id ="clickHeading">Залишилося кліків:</h1>
+<h2 id ="status">Гра триває!</h2>
+<h2 id ="click">25</h2>
+<img id="map" width=1135 height=750 src="map.png">
+<script>
+//Block scroll
+var stopScroll = function () {
+document.body.style.cssText = `
+overflow: hidden;
+`}
+stopScroll();
+//Creating a function for music and adding background music
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+  }
+}
+var mySound = new sound("button.mp3");
+var mySoundi = new sound("zvuk-pobedyi.mp3");
+var mySoundj = new sound("Limousines.mp3");
+var mySoundl = new sound("defeat.mp3");
+mySoundj.play();
+setInterval(function(){mySoundj.play()}, 265000)
+//Moving elements
+$("#heading").offset({left: 715, top: 20});
+$("#map").offset({left: 360, top: 70});
+$("#statusHeading").offset({left: 80, top: 170});
+$("#clickHeading").offset({left: 1550, top: 170});
+$("#status").offset({left: 90, top: 230});
+$("#click").offset({left: 1700, top: 230});
+//Creating pictures
+var chest = new Image();
+chest.scr = "sunduk.png";
+var hot = new Image();
+hot.scr = "flame.png";
+var warm = new Image();
+warm.scr = "sharf.png";
+var coldly = new Image();
+coldly.scr = "ice.png";
+var veryColdly = new Image();
+veryColdly.scr = "ultra_ice.png";
+var veryHot = new Image();
+veryHot.scr = "ultra_flame.png";
+//Creating functions and variables
+var gameOver = false;
+var clicks = 25;
+var id = "q";
+var generationId = function () {id = id + "q"}
+var win = false;
+var getRandomNumber = function (число) {return Math.floor(Math.random() * число)};
+var defineDistance = function (event, target) {
+var diffX = event.offsetX - target.x;
+var diffY = event.offsetY - target.y;
+return Math.sqrt((diffX * diffX) + (diffY * diffY));
+};
+var defineLabel = function (distance) {
+if (distance < 35) {win = true;
+mySoundi.play();
+return chest.scr}
+else if (distance < 200) {return veryHot.scr}
+else if (distance < 400) {return hot.scr}
+else if (distance < 600) {return warm.scr}
+else if (distance < 800) {return coldly.scr}
+else {return veryColdly.scr}
+};
+//Determining the location of the chest
+var target = {
+x: getRandomNumber(900),
+y: getRandomNumber(600)
+};
+//Creating a click handler
+$("#map").click(function (event) {
+if (gameOver == false) {
+clicks--;
+if (clicks < 10) {document.getElementById("click").style.color = "Red";}
+else if (clicks < 20) {document.getElementById("click").style.color = "Gold";}
+else {document.getElementById("click").style.color = "Green";}
+$("#click").text(clicks);
+mySound.play();
+generationId();
+var distance = defineDistance(event, target);
+var distanceHint = defineLabel(distance);
+$("body").append("<img id='" + id + "' width=35 height=35 src=" + distanceHint + ">");
+$("#" + id + "").offset({left: event.pageX, top: event.pageY});
+if (distanceHint == chest.scr) {
+$("#status").text("Перемога!");
+document.getElementById("status").style.color = "Green";
+$("#" + id + "").each(function(){$(this).css('width','55px')});
+$("#" + id + "").each(function(){$(this).css('height','55px')});
+}}
+if (win || clicks < 1) {if (gameOver == false && win == false) {mySoundl.play();} gameOver = true; if (clicks < 1) {$("#status").text("Поразка!");
+document.getElementById("status").style.color = "Red";
+}
+$("body").append("<button id='button'>Рестарт!<button>");
+document.getElementById("button").style.color = "blue";
+$("#button").offset({left: 90, top: 280})
+$("#button").click(function() {
+location.reload();
+})
+}
+});
+
+</script>
+  </body>
+</html>
